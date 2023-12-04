@@ -12,6 +12,9 @@ function App() {
   const [Interest, setInterest] = useState(0);
   const [Rate, setRate] = useState(0);
   const [Year, setYear] = useState(0);
+  const [isPrinciple, setIsPrinciple] = useState(true);
+  const [isRate, setIsRate] = useState(true);
+  const [isYear, setIsYear] = useState(true);
 
 
   const handleSubmit = (e) => {
@@ -22,7 +25,7 @@ function App() {
     console.log(Rate);
     console.log('==========year=========');
     console.log(Year);
-    let result = (Principle * Rate * Year) /100;
+    let result = (Principle * Rate * Year) / 100;
     console.log(result);
     setInterest(result)
   }
@@ -32,6 +35,47 @@ function App() {
     setInterest(0);
     setRate(0);
     setYear(0);
+  }
+
+  const validate = (e) => {
+    const { value, name } = e.target;
+
+    // regular expression to check whether a given string has particular pattern
+    // should have forward slash at the beginning and end
+    // starting of expression is indicated by ^ (raised)
+    // ending of expression is indicated by $
+    // if it match, we get array as return or else null
+    // !! is used to convert result of regular xprsn to boolean value
+
+    if (!!value.match(/^[0-9]+$/)) {
+      if (name === 'principle') {
+        setPrinciple(value);
+        setIsPrinciple(true);
+      }
+      else if (name === 'rate') {
+        setRate(value);
+        setIsRate(true);
+      }
+      else {
+        setYear(value);
+        setIsYear(true);
+      }
+    }
+    else {
+      if (name === 'principle') {
+        setPrinciple(value);
+        setIsPrinciple(false);
+      }
+      else if (name === 'rate') {
+        setRate(value);
+        setIsRate(false);
+      }
+      else {
+        setYear(value);
+        setIsYear(false);
+      }
+    }
+
   }
 
   return (
@@ -49,23 +93,50 @@ function App() {
 
         <form action="" className='mt-5' onSubmit={(e) => handleSubmit(e)} >
           <div className='mb-3' >
-            <TextField id="outlined-basic" label="&#x20B9; Principle Amount" variant="outlined" className='w-100' value={Principle}
-              onChange={(e) => setPrinciple(e.target.value)} />
+            <TextField name='principle' id="outlined-basic" label="&#x20B9; Principle Amount" variant="outlined" className='w-100' value={Principle}
+              onChange={(e) => validate(e)} />
           </div>
 
+
+          {
+            ! isPrinciple &&
+            <div>
+              <p className='text-danger'>Invalid Input</p>
+            </div>
+          }
+
+
           <div className='mb-3' >
-            <TextField id="outlined-basic" label="Rate of Interest (p.a)%" variant="outlined" className='w-100' value={Rate}
-              onChange={(e) => setRate(e.target.value)} />
+            <TextField name='rate' id="outlined-basic" label="Rate of Interest (p.a)%" variant="outlined" className='w-100' value={Rate}
+              onChange={(e) => validate(e)} />
           </div>
+
+
+          {
+            ! isRate &&
+            <div>
+              <p className='text-danger'>Invalid Input</p>
+            </div>
+          }
+
 
           <div className='mt-3' >
             <TextField id="outlined-basic" label="Year (yr)" variant="outlined" className='w-100' value={Year}
-              onChange={(e) => setYear(e.target.value)} />
+              onChange={(e) => validate(e)} />
           </div>
+
+
+          {
+            ! isYear &&
+            <div>
+              <p className='text-danger'>Invalid Input</p>
+            </div>
+          }
+
 
           <div className='mt-5' >
             <Stack direction="row" spacing={2}>
-              <Button type='submit' variant="contained" className='bg-success w-50'>Calculate</Button>
+              <Button disabled={!isPrinciple || !isRate || !isYear} type='submit' variant="contained" className='bg-success w-50'>Calculate</Button>
               <Button variant="contained" className='bg-light w-50' style={{ color: "blue" }} onClick={clearData} >Reset</Button>
               {/* <Button variant="outlined" className='w-50' style={{border:"1px solid black"}} >Reset</Button> */}
             </Stack>
